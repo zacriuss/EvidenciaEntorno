@@ -1,4 +1,5 @@
 package Main;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,28 +20,28 @@ public class CuentaBancaria {
 		if (prestamo > 0) {
 			prestamo -= cantidad;
 			if (prestamo < 0) {
-				saldo.add(saldo.get(saldo.size() - 1) + Math.abs(prestamo));
+				saldo.add(obtenerSaldo() + Math.abs(prestamo));
 				prestamo = 0;
 				tienePrestamo = false;
 			}
 		} else {
-			saldo.add(saldo.get(saldo.size() - 1) + cantidad);
+			saldo.add(obtenerSaldo() + cantidad);
 		}
 	}
 
 	public void retirarSaldo(double cantidad) throws Exception {
-		if (cantidad > saldo.get(saldo.size() - 1) + credito) {
+		if (cantidad > obtenerSaldo() + credito) {
 			throw new Exception("No hay suficiente saldo disponible");
 		}
-		saldo.add(saldo.get(saldo.size() - 1) - cantidad);
+		saldo.add(obtenerSaldo() - cantidad);
 	}
 
 	public double obtenerSaldo() {
-		return saldo.get(saldo.size() - 1);
+		return saldo.isEmpty() ? 0 : saldo.get(saldo.size() - 1);
 	}
 
 	public void modificarCredito(double cantidad) throws Exception {
-		if (saldo.get(saldo.size() - 1) + cantidad < 0) {
+		if (obtenerSaldo() + cantidad < 0) {
 			throw new Exception("El nuevo credito no puede ser aplicado");
 		}
 		credito = cantidad;
@@ -51,8 +52,8 @@ public class CuentaBancaria {
 	}
 
 	public void solicitarPrestamo(double cantidad) throws Exception {
-		if (tienePrestamo) {
-			throw new Exception("Ya tienes un préstamo en curso");
+		if (tienePrestamo || obtenerSaldo()==0) {
+			throw new Exception("No se le puede realizar un prestamo");
 		}
 		for (Double monto : saldo) {
 			if (cantidad / 3 > monto) {
@@ -61,6 +62,6 @@ public class CuentaBancaria {
 		}
 		prestamo = cantidad;
 		tienePrestamo = true;
-		saldo.add(saldo.get(saldo.size() - 1) + cantidad);
+		saldo.add(obtenerSaldo() + cantidad);
 	}
 }
